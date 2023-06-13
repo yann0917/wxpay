@@ -5,11 +5,12 @@ import (
 	"crypto/tls"
 	"encoding/pem"
 	"encoding/xml"
-	"golang.org/x/crypto/pkcs12"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"golang.org/x/crypto/pkcs12"
 )
 
 func XmlToMap(xmlStr string) Params {
@@ -22,19 +23,25 @@ func XmlToMap(xmlStr string) Params {
 		value string
 	)
 
+	inBetween := false
 	for t, err := decoder.Token(); err == nil; t, err = decoder.Token() {
 		switch token := t.(type) {
-		case xml.StartElement: // 开始标签
+		case xml.StartElement:
 			key = token.Name.Local
-		case xml.CharData: // 标签内容
-			content := string([]byte(token))
-			value = content
-		}
-		if key != "xml" {
-			if value != "\n" {
-				params.SetString(key, value)
+			if key == "xml" {
+				continue
 			}
+			inBetween = true
+		case xml.CharData:
+			if !inBetween {
+				continue
+			}
+			value = string(token)
+			params[key] = value
+		case xml.EndElement:
+			inBetween = false
 		}
+
 	}
 
 	return params
@@ -67,7 +74,6 @@ func pkcs12ToPem(p12 []byte, password string) tls.Certificate {
 
 	blocks, err := pkcs12.ToPEM(p12, password)
 
-	// 从恐慌恢复
 	defer func() {
 		if x := recover(); x != nil {
 			log.Print(x)
