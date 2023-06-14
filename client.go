@@ -83,8 +83,10 @@ func (c *Client) postWithCert(url string, params Params) (string, error) {
 	}
 
 	// 将pkcs12证书转成pem
-	cert := pkcs12ToPem(c.account.certData, c.account.mchID)
-
+	cert, err := pkcs12ToPem(c.account.certData, c.account.mchID)
+	if err != nil {
+		return "", err
+	}
 	config := &tls.Config{
 		Certificates: []tls.Certificate{cert},
 	}
@@ -135,7 +137,7 @@ func (c *Client) Sign(params Params) string {
 	// 由于切片的元素顺序是不固定，所以这里强制给切片元素加个顺序
 	sort.Strings(keys)
 
-	//创建字符缓冲
+	// 创建字符缓冲
 	var buf bytes.Buffer
 	for _, k := range keys {
 		if len(params.GetString(k)) > 0 {
@@ -158,7 +160,7 @@ func (c *Client) Sign(params Params) string {
 	switch c.signType {
 	case MD5:
 		dataMd5 = md5.Sum(buf.Bytes())
-		str = hex.EncodeToString(dataMd5[:]) //需转换成切片
+		str = hex.EncodeToString(dataMd5[:]) // 需转换成切片
 	case HMACSHA256:
 		h := hmac.New(sha256.New, []byte(c.account.apiKey))
 		h.Write(buf.Bytes())

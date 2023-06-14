@@ -1,6 +1,8 @@
 package wxpay
 
 import (
+	"fmt"
+	"os"
 	"testing"
 )
 
@@ -21,4 +23,16 @@ func TestMapToXml(t *testing.T) {
 
 func TestNonceStr(t *testing.T) {
 	t.Log(nonceStr())
+}
+
+func TestPkcs12ToPem(t *testing.T) {
+	file, err := os.ReadFile("./apiclient_cert.p12")
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	cert, _ := pkcs12ToPem(file, "1540260411")
+	t.Log(string(cert.Certificate[0]))
+	t.Log(cert.PrivateKey)
 }

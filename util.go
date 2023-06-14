@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"encoding/pem"
 	"encoding/xml"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -70,18 +69,12 @@ func nonceStr() string {
 }
 
 // 将Pkcs12转成Pem
-func pkcs12ToPem(p12 []byte, password string) tls.Certificate {
+func pkcs12ToPem(p12 []byte, password string) (cert tls.Certificate, err error) {
 
 	blocks, err := pkcs12.ToPEM(p12, password)
 
-	defer func() {
-		if x := recover(); x != nil {
-			log.Print(x)
-		}
-	}()
-
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	var pemData []byte
@@ -89,9 +82,7 @@ func pkcs12ToPem(p12 []byte, password string) tls.Certificate {
 		pemData = append(pemData, pem.EncodeToMemory(b)...)
 	}
 
-	cert, err := tls.X509KeyPair(pemData, pemData)
-	if err != nil {
-		panic(err)
-	}
-	return cert
+	cert, err = tls.X509KeyPair(pemData, pemData)
+
+	return
 }
