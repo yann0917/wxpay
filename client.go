@@ -8,6 +8,7 @@ import (
 	"crypto/tls"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -232,6 +233,7 @@ func (c *Client) Refund(params Params) (Params, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(xmlStr)
 	return c.processResponseXml(xmlStr)
 }
 

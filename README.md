@@ -1,7 +1,6 @@
-# wxpay 
+# wxpay
 
 ![Powered by zch](https://img.shields.io/badge/Powered%20by-zch-blue.svg?style=flat-square) ![Language](https://img.shields.io/badge/language-Go-orange.svg) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md)
-
 
 wxpay 提供了以下的方法：
 
@@ -29,17 +28,17 @@ wxpay 提供了以下的方法：
 ## 安装
 
 ```bash
-$ go get github.com/objcoding/wxpay
+go get github.com/yann0917/wxpay
 
 ```
 
 ## go modules
+
 ```cgo
 // go.mod
-require github.com/objcoding/wxpay v1.0.5
+require github.com/yann0917/wxpay
 
 ```
-
 
 ## 示例
 
@@ -99,7 +98,6 @@ p, _ := client.RefundQuery(params)
 
 ```
 
-
 ```cgo
 // 签名
 signStr := client.Sign(params)
@@ -128,5 +126,5 @@ return wxpay.Notifies{}.NotOK("支付失败或退款失败了")
 ```
 
 ## License
-MIT license
 
+MIT license
